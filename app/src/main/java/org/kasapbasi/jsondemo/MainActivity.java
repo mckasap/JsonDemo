@@ -6,6 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,11 +59,27 @@ public class MainActivity extends AppCompatActivity {
         GetJson gj= new GetJson();
 //api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}
         try {
-            str= gj.execute("https://api.openweathermap.org/data/2.5/weather?q=trabzon&appid=1d8e22761ea89c1ff5f3229a813eee9c").get();
-        Log.d("HAVA_JSON",str);
+            str= gj.execute("https://api.openweathermap.org/data/2.5/weather?q=istanbul&appid=1d8e22761ea89c1ff5f3229a813eee9c").get();
+            JSONObject all= new JSONObject(str);
+            String w= all.getString("weather");
+            String main=all.getString("main");
+            JSONObject mw=new JSONObject(main);
+            JSONArray jarr= new JSONArray(w);
+            for(int i=0;i<jarr.length();i++){
+                JSONObject joPart=jarr.getJSONObject(i);
+                Log.d("main",joPart.getString("main"));
+                Log.d("description",joPart.getString("description"));
+            }
+
+            Log.d("temp", (Double.parseDouble(mw.getString("temp"))-273.15)+" C");
+            Log.d("pressure",mw.getString("pressure") +"hPa");
+            Log.d("humidity",mw.getString("humidity")+"%");
+           // Log.d("HAVA_JSON",w);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
